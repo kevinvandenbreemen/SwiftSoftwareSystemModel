@@ -1,19 +1,31 @@
 public class SystemModel {
 
-    var classes: [Class]
-    var interfaces: [Interface]
+    var _classes: [Class]
+    var _interfaces: [Interface]
+
+    public var classes: [Class] {
+        get {
+            return _classes
+        }
+    }
+
+    public var interfaces: [Interface] {
+        get {
+            return _interfaces
+        }
+    }
     
     public init() {
-        self.classes = []
-        self.interfaces = []
+        self._classes = []
+        self._interfaces = []
     }
     
     func addClass(clz: Class) {
-        self.classes.append(clz)
+        self._classes.append(clz)
     }
 
     func addInterface(interface: Interface) {
-        self.interfaces.append(interface)
+        self._interfaces.append(interface)
     }
 
 }

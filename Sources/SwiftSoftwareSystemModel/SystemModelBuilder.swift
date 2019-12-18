@@ -91,7 +91,7 @@ public class SystemModelBuilder {
     }
 
     private func updateSystemModelClass(with updatedClass: Class) {
-        systemModel.classes.removeAll(where: {clz in 
+        systemModel._classes.removeAll(where: {clz in 
             clz.name == updatedClass.name
         })
         systemModel.addClass(clz: updatedClass)
