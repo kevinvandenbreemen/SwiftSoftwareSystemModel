@@ -1,10 +1,15 @@
 public struct Class {
     public let name: String
 
-    var interfaces: [Interface] = []
+    public var interfaces: [Interface] {
+        get {
+            return _interfaces
+        }
+    }
+    var _interfaces: [Interface] = []
 
     mutating func implements(interface: Interface) {
-        self.interfaces.append(interface)
+        self._interfaces.append(interface)
     }
 
     public init(name: String) {
