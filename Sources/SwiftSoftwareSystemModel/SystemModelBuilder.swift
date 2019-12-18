@@ -10,7 +10,7 @@ public class SystemModelBuilder {
         self.classNameToImplementedInterfaceNames = [:]
     }
     
-    func addClass(clz: Class) {
+    public func addClass(clz: Class) {
         
         var classToAdd = clz
         if let interfacesImplementedByClassName = classNameToImplementedInterfaceNames[clz.name] {
@@ -26,7 +26,7 @@ public class SystemModelBuilder {
         self.systemModel.addClass(clz: classToAdd)
     }
 
-    func addInterface(interface: Interface) {
+    public func addInterface(interface: Interface) {
         self.systemModel.addInterface(interface: interface)
 
         for (className, interfaces) in classNameToImplementedInterfaceNames {
