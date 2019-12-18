@@ -43,7 +43,7 @@ public class SystemModelBuilder {
     }
 
     /// Alert this builder that the class with the given name implements the given interface
-    func addImplements(
+    public func addImplements(
         type className: String,     //  Note that I use a string here, not a Class as we want to be able to handle extension declarations in separate files
         implements interfaceName: String) {
 
