@@ -26,6 +26,26 @@ public class SystemModelBuilder {
         self.systemModel.addClass(clz: classToAdd)
     }
 
+    public func addProperty(ofType className: String, to toClassName: String, named: String) {
+        let existingClassOpt = systemModel.classes.first(where: {clz in 
+            clz.name == className
+        })
+        let existingTargetClassOpt = systemModel.classes.first(where: {clz in 
+            clz.name == toClassName
+        })
+
+        guard var existingTargetClass = existingTargetClassOpt else {
+            return
+        }
+
+        //  Two scenarios:
+        //  1.  Class exists
+        if let classForProperty = existingClassOpt {
+            existingTargetClass._properties.append(ClassProperty.init(type: classForProperty, name: named))
+            updateSystemModelClass(with: existingTargetClass)
+        }
+    }
+
     public func addInterface(interface: Interface) {
         self.systemModel.addInterface(interface: interface)
 

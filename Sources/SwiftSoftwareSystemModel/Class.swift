@@ -8,6 +8,13 @@ public struct Class {
     }
     var _interfaces: [Interface] = []
 
+    public var properties: [ClassProperty] {
+        get {
+            return _properties
+        }
+    }
+    var _properties: [ClassProperty] = []
+
     mutating func implements(interface: Interface) {
         self._interfaces.append(interface)
     }
