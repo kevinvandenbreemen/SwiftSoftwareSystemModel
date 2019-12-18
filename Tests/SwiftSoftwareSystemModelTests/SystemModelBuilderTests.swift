@@ -100,6 +100,26 @@ class SystemModelBuilderTests: XCTestCase {
 
         let firstClass = builder.systemModel.classes.first(where: {c in c.name == clz.name})!
         XCTAssertFalse(firstClass.properties.isEmpty, "Members were not added to the class \(firstClass)")
+
+        let targetClass = firstClass.properties[0].type
+        XCTAssertEqual(targetClass.name, owned.name)
+    }
+
+    func testAddsMemberToClassBeforeMemberTypeEncountered() {
+        let builder = SystemModelBuilder()
+        
+        let clz = Class.init(name: "Owner")
+        let owned = Class.init(name: "Owned")
+        
+        builder.addClass(clz: clz)
+        builder.addProperty(ofType: "Owned", to: clz.name, named: "ownedMember")
+        builder.addClass(clz: owned)
+
+        let firstClass = builder.systemModel.classes.first(where: {c in c.name == clz.name})!
+        XCTAssertFalse(firstClass.properties.isEmpty, "Members were not added to the class \(firstClass)")
+
+        let targetClass = firstClass.properties[0].type
+        XCTAssertEqual(targetClass.name, owned.name)
     }
 
 
@@ -109,6 +129,7 @@ class SystemModelBuilderTests: XCTestCase {
         ("Adds interface to a class even when neither the class nor the interface have been encountered at time of implements decl", testRegistersInterfaceImplementationBeforeClassOrInterfaceEncountered),
         ("Adds interface to a class when class then interface added after initial implementation", testRegistersInterfaceImplementationBeforeClassOrInterfaceEncounteredClassThenInterfaceAdded),
         ("Adds a member to a class", testAddsMemberToClass),
+        ("Can add members to a class even when those members are of unknown types", testAddsMemberToClassBeforeMemberTypeEncountered),
     ]
 
 }

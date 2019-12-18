@@ -4,10 +4,14 @@ public class SystemModelBuilder {
 
     /// Name of a class to list of its implemented interfaces
     private var classNameToImplementedInterfaceNames: [String: [String]]
+
+    /// Names of types mapped to fields declared before the type was encountered
+    private var typeNamesToClassFields: [String: [(owningTypeName: String, fieldName: String)]]
     
     public init(systemModel model: SystemModel = SystemModel()) {
         self.systemModel = model
         self.classNameToImplementedInterfaceNames = [:]
+        self.typeNamesToClassFields = [:]
     }
     
     public func addClass(clz: Class) {
@@ -20,6 +24,17 @@ public class SystemModelBuilder {
                 }) {
                     classToAdd.implements(interface: existingInterface)
                 }
+            }
+        }
+
+        //  Handle field declarations that are for the new type
+        if let missingFieldDeclarations = typeNamesToClassFields[clz.name] {
+            missingFieldDeclarations.forEach{ declaration in 
+                guard var existingClass = getClass(named: declaration.owningTypeName) else {
+                    return
+                }
+                existingClass._properties.append(ClassProperty(type: clz, name: declaration.fieldName))
+                updateSystemModelClass(with: existingClass)
             }
         }
 
@@ -43,6 +58,15 @@ public class SystemModelBuilder {
         if let classForProperty = existingClassOpt {
             existingTargetClass._properties.append(ClassProperty.init(type: classForProperty, name: named))
             updateSystemModelClass(with: existingTargetClass)
+        }
+
+        //  2.  Class does not exist
+        else {
+            if typeNamesToClassFields[className] == nil {
+                typeNamesToClassFields[className] = []
+            }
+            let fieldDec: (owningTypeName: String, fieldName: String) = (owningTypeName: toClassName, fieldName: named)
+            typeNamesToClassFields[className]!.append(fieldDec)
         }
     }
 
@@ -115,6 +139,12 @@ public class SystemModelBuilder {
             clz.name == updatedClass.name
         })
         systemModel.addClass(clz: updatedClass)
+    }
+
+    private func getClass(named: String) -> Class? {
+        return systemModel.classes.first(where: {clz in 
+            clz.name == named
+        })
     }
 
 }
