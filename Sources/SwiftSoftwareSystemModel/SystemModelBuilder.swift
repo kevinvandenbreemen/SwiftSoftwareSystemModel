@@ -92,6 +92,17 @@ public class SystemModelBuilder {
             }
         }
 
+        //  Handle field declarations that are for the new type
+        if let missingFieldDeclarations = typeNamesToClassFields[interface.name] {
+            missingFieldDeclarations.forEach{ declaration in 
+                guard var existingClass = getClass(named: declaration.owningTypeName) else {
+                    return
+                }
+                existingClass._properties.append(ClassProperty(type: interface, name: declaration.fieldName))
+                updateSystemModelClass(with: existingClass)
+            }
+        }
+
     }
 
     /// Alert this builder that the class with the given name implements the given interface
