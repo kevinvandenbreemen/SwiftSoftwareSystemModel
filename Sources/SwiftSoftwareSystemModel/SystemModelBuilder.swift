@@ -45,6 +45,9 @@ public class SystemModelBuilder {
         let existingClassOpt = systemModel.classes.first(where: {clz in 
             clz.name == className
         })
+        let existingProtocolOpt = systemModel.interfaces.first(where: { ifc in 
+            ifc.name == className
+        })
         let existingTargetClassOpt = systemModel.classes.first(where: {clz in 
             clz.name == toClassName
         })
@@ -57,6 +60,11 @@ public class SystemModelBuilder {
         //  1.  Class exists
         if let classForProperty = existingClassOpt {
             existingTargetClass._properties.append(ClassProperty.init(type: classForProperty, name: named))
+            updateSystemModelClass(with: existingTargetClass)
+        }
+        //  1b. Protocol matching name exists
+        else if let protocolForProperty = existingProtocolOpt {
+            existingTargetClass._properties.append(ClassProperty.init(type: protocolForProperty, name: named))
             updateSystemModelClass(with: existingTargetClass)
         }
 

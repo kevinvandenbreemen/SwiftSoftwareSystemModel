@@ -1,4 +1,4 @@
-public struct Class {
+public struct Class: Type {
     public let name: String
 
     public var interfaces: [Interface] {

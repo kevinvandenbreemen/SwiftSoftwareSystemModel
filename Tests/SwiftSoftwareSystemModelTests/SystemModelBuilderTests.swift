@@ -122,6 +122,23 @@ class SystemModelBuilderTests: XCTestCase {
         XCTAssertEqual(targetClass.name, owned.name)
     }
 
+    func testAddsInterfaceMemberToClass() {
+        let builder = SystemModelBuilder()
+        
+        let clz = Class.init(name: "Owner")
+        let owned = Interface.init(name: "Owned")
+        
+        builder.addClass(clz: clz)
+        builder.addInterface(interface: owned)
+        builder.addProperty(ofType: owned.name, to: clz.name, named: "ownedMember")
+
+        let firstClass = builder.systemModel.classes.first(where: {c in c.name == clz.name})!
+        XCTAssertFalse(firstClass.properties.isEmpty, "Members were not added to the class \(firstClass)")
+
+        let targetClass = firstClass.properties[0].type
+        XCTAssertEqual(targetClass.name, owned.name)
+    }
+
 
     static var allTests = [
         ("Adds existing interface to a class", testDetectsInterfaceImplementation),
@@ -130,6 +147,7 @@ class SystemModelBuilderTests: XCTestCase {
         ("Adds interface to a class when class then interface added after initial implementation", testRegistersInterfaceImplementationBeforeClassOrInterfaceEncounteredClassThenInterfaceAdded),
         ("Adds a member to a class", testAddsMemberToClass),
         ("Can add members to a class even when those members are of unknown types", testAddsMemberToClassBeforeMemberTypeEncountered),
+        ("Can detect a member that is an interface", testAddsInterfaceMemberToClass),
     ]
 
 }
