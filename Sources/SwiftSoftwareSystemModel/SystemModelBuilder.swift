@@ -56,6 +56,9 @@ public class SystemModelBuilder {
             return
         }
 
+        existingTargetClass._propertiesForDisplay.append(PropertyForDisplay(name: named, multiplicity: .single, type: className))
+        updateSystemModelClass(with: existingTargetClass)
+
         //  Two scenarios:
         //  1.  Class exists
         if let classForProperty = existingClassOpt {

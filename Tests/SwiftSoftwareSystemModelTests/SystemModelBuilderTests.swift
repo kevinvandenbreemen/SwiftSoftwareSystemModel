@@ -156,6 +156,25 @@ class SystemModelBuilderTests: XCTestCase {
         XCTAssertEqual(targetClass.name, owned.name)
     }
 
+    func testAddsFieldForDocumentation() {
+        let builder = SystemModelBuilder()
+        
+        let clz = Class.init(name: "Owner")
+        
+        builder.addClass(clz: clz)
+
+        builder.addProperty(ofType: "NoSuchClass", to: "Owner", named: "noSuchClass")
+
+        let built = builder.systemModel.classes.first(where: { clz in 
+            return clz.name == "Owner"
+        })!
+
+        XCTAssertEqual(1, built.propertiesForDisplay.count)
+        let property = built.propertiesForDisplay[0]
+        XCTAssertEqual("noSuchClass", property.name)
+        XCTAssertEqual(.single, property.multiplicity)
+        XCTAssertEqual("NoSuchClass", property.type)
+    }
 
     static var allTests = [
         ("Adds existing interface to a class", testDetectsInterfaceImplementation),
@@ -166,6 +185,7 @@ class SystemModelBuilderTests: XCTestCase {
         ("Can add members to a class even when those members are of unknown types", testAddsMemberToClassBeforeMemberTypeEncountered),
         ("Can detect a member that is an interface", testAddsInterfaceMemberToClass),
         ("Can detect an interface member before that interface encountered", testAddsInterfaceMemberToClassBeforeInterfaceEncountered),
+        ("Can add a field for documentation", testAddsFieldForDocumentation)
     ]
 
 }

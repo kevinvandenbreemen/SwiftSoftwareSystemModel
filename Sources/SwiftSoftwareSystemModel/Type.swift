@@ -2,5 +2,6 @@
 public protocol Type {
 
     var name: String { get }
+    var propertiesForDisplay: [PropertyForDisplay] { get }
 
 }
