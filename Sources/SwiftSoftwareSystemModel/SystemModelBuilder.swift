@@ -41,6 +41,17 @@ public class SystemModelBuilder {
         self.systemModel.addClass(clz: classToAdd)
     }
 
+    func addPropertyToInterface(called interfaceName: String, ofType className: String, named: String) {
+        guard var existingTargetInterface = systemModel.interfaces.first(where: {ifc in 
+            ifc.name == interfaceName
+        }) else {
+            return
+        }
+
+        existingTargetInterface._propertiesForDisplay.append(PropertyForDisplay(name: named, multiplicity: .single, type: className))
+        updateSystemModelInterface(with: existingTargetInterface)
+    }
+
     public func addProperty(ofType className: String, to toClassName: String, named: String) {
         let existingClassOpt = systemModel.classes.first(where: {clz in 
             clz.name == className
@@ -53,6 +64,7 @@ public class SystemModelBuilder {
         })
 
         guard var existingTargetClass = existingTargetClassOpt else {
+            addPropertyToInterface(called: toClassName, ofType: className, named: named)
             return
         }
 
@@ -161,6 +173,13 @@ public class SystemModelBuilder {
             clz.name == updatedClass.name
         })
         systemModel.addClass(clz: updatedClass)
+    }
+
+    private func updateSystemModelInterface(with updatedInterface: Interface) {
+        systemModel._interfaces.removeAll(where: {ifc in 
+            ifc.name == updatedInterface.name
+        })
+        systemModel.addInterface(interface: updatedInterface)
     }
 
     private func getClass(named: String) -> Class? {
