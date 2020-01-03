@@ -4,7 +4,7 @@ public struct PropertyDetails {
     public let optional: Bool
 
     
-    init(optional: Bool = false) {
+    public init(optional: Bool = false) {
         self.optional = optional
     }
     
