@@ -196,6 +196,54 @@ class SystemModelBuilderTests: XCTestCase {
         XCTAssertEqual("NoSuchClass", property.type)
     }
 
+    func testAllowsProvidingAdditionalDetailsOnNewField() {
+        let builder = SystemModelBuilder()
+        
+        let clz = Class.init(name: "Owner")
+        
+        builder.addClass(clz: clz)
+
+        builder.addProperty(ofType: "NoSuchClass", to: "Owner", named: "noSuchClass", additionalDetails: PropertyDetails(optional: true))
+
+        let built = builder.systemModel.classes.first(where: { clz in 
+            return clz.name == "Owner"
+        })!
+
+        XCTAssertEqual(1, built.propertiesForDisplay.count)
+        let property = built.propertiesForDisplay[0]
+        
+        guard let additionalDetails = property.additionalDetails else {
+            XCTFail("Additional details not found")
+            return
+        }
+
+        XCTAssertTrue(additionalDetails.optional)
+    }
+
+    func testAllowsProvidingAdditionalDetailsOnNewFieldForProtocol() {
+        let builder = SystemModelBuilder()
+        
+        let ifc = Interface.init(name: "Owner")
+        
+        builder.addInterface(interface: ifc)
+
+        builder.addProperty(ofType: "NoSuchClass", to: "Owner", named: "noSuchClass", additionalDetails: PropertyDetails(optional: true))
+
+        let built = builder.systemModel.interfaces.first(where: { ifc in 
+            return ifc.name == "Owner"
+        })!
+
+        XCTAssertEqual(1, built.propertiesForDisplay.count)
+        let property = built.propertiesForDisplay[0]
+        
+        guard let additionalDetails = property.additionalDetails else {
+            XCTFail("Additional details not found")
+            return
+        }
+
+        XCTAssertTrue(additionalDetails.optional)
+    }
+
     static var allTests = [
         ("Adds existing interface to a class", testDetectsInterfaceImplementation),
         ("Adds interface to a class even when interface not yet encountered at time of implements decl", testRegisteresInterfaceImplementationBeforeInterfaceEncountered),
@@ -207,6 +255,8 @@ class SystemModelBuilderTests: XCTestCase {
         ("Can detect an interface member before that interface encountered", testAddsInterfaceMemberToClassBeforeInterfaceEncountered),
         ("Can add a field for documentation", testAddsFieldForDocumentation),
         ("Can add a field for documentation (protocol)", testAddsFieldForDocumentationForProtocol),
+        ("Allows providing additional details for new field", testAllowsProvidingAdditionalDetailsOnNewField),
+        ("Allows providing additional details for new field (protocol)", testAllowsProvidingAdditionalDetailsOnNewFieldForProtocol),
     ]
 
 }

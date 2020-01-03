@@ -41,18 +41,18 @@ public class SystemModelBuilder {
         self.systemModel.addClass(clz: classToAdd)
     }
 
-    func addPropertyToInterface(called interfaceName: String, ofType className: String, named: String) {
+    func addPropertyToInterface(called interfaceName: String, ofType className: String, named: String, additionalDetails: PropertyDetails?) {
         guard var existingTargetInterface = systemModel.interfaces.first(where: {ifc in 
             ifc.name == interfaceName
         }) else {
             return
         }
 
-        existingTargetInterface._propertiesForDisplay.append(PropertyForDisplay(name: named, multiplicity: .single, type: className))
+        existingTargetInterface._propertiesForDisplay.append(PropertyForDisplay(name: named, multiplicity: .single, type: className, additionalDetails: additionalDetails))
         updateSystemModelInterface(with: existingTargetInterface)
     }
 
-    public func addProperty(ofType className: String, to toClassName: String, named: String) {
+    public func addProperty(ofType className: String, to toClassName: String, named: String, additionalDetails: PropertyDetails? = nil) {
         let existingClassOpt = systemModel.classes.first(where: {clz in 
             clz.name == className
         })
@@ -64,11 +64,11 @@ public class SystemModelBuilder {
         })
 
         guard var existingTargetClass = existingTargetClassOpt else {
-            addPropertyToInterface(called: toClassName, ofType: className, named: named)
+            addPropertyToInterface(called: toClassName, ofType: className, named: named, additionalDetails: additionalDetails)
             return
         }
 
-        existingTargetClass._propertiesForDisplay.append(PropertyForDisplay(name: named, multiplicity: .single, type: className))
+        existingTargetClass._propertiesForDisplay.append(PropertyForDisplay(name: named, multiplicity: .single, type: className, additionalDetails: additionalDetails))
         updateSystemModelClass(with: existingTargetClass)
 
         //  Two scenarios:
